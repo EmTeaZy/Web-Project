@@ -2,6 +2,59 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
+const xoauth2 = require('xoauth2');
+const EMAIL_SECRET = 'asdf1093KMnzxcvnkljvasdu09123nlasdasdf';
+const { google } = require('googleapis');
+
+// Setting values for email parameter variables
+const CLIENT_ID = '437071356780-ai3jjkfgrs1auhg2u1o81pfn98s3aci4.apps.googleusercontent.com';
+const CLEINT_SECRET = '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';
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+const REFRESH_TOKEN = '1//04CwhQWJH65xMCgYIARAAGAQSNwF-L9Ir4MIFU1sI1en4ETyeTho3S6iu2AvaQ-zBl1DGagAh98P9DjWscDf0miE84_dbctvoX1Q';
+
+const oAuth2Client = new google.auth.OAuth2(
+  CLIENT_ID,
+  CLEINT_SECRET,
+  REDIRECT_URI
+);
+
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+async function sendMail(url, { email, name } ) {
+  try {
+    const accessToken = await oAuth2Client.getAccessToken();
+
+
+const transport = nodemailer.createTransport({
+  service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: 'the.ot.classroom@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLEINT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });    
+
+    const mailOptions = {
+      from: 'OT Classroom <the.ot.classroom@gmail.com>',
+      to: String(email),
+      subject: 'Email Verification',
+      html: `<h1>Hey there, ${name}!</h1> Thank you for signing up for OT Classroom! <br> Please click <a href="${url}">here</a> email to confirm your email. <br><br> OT Classroom `,
+      
+    };        
+    
+    const result = await transport.sendMail(mailOptions);
+    return result;
+  } catch (error) {
+    return error;
+  }
+}
+
 // Load User model
 const User = require('../models/User');
 const { forwardAuthenticated } = require('../config/auth');
@@ -66,14 +119,47 @@ router.post('/register', (req, res) => {
                   'success_msg',
                   'You are now registered and can log in'
                 );
-                res.redirect('/users/login');
               })
               .catch(err => console.log(err));
+
+            // Sending an email to the user with a confirmation link
+            // async email
+            jwt.sign(
+              {
+                user: _.pick(user, 'id'),
+              },
+              EMAIL_SECRET,
+              {
+                expiresIn: '1d',
+              },
+              (err, emailToken) => {
+
+                const url = `http://localhost:5000/users/confirmed/${emailToken}`;
+
+                sendMail(url, newUser)
+                .then(() => console.log('Email sent successfully'))
+                .catch((error) => console.log(error.message));
+              },
+            );
+            res.redirect('/users/confirmation');
           });
         });
       }
     });
   }
+});
+
+// Redirecting user to the confirm email page
+router.get('/confirmation', (req, res) => res.render('confirmEmail'))
+
+
+router.get('/confirmed/:token', async (req, res) => {
+
+  console.log('User here')
+  const { user: { id } } = jwt.verify(req.params.token, EMAIL_SECRET);
+  await User.updateOne({ confirmed: true }, { where: { id } });
+  
+  res.render('confirmed')
 });
 
 // Login
