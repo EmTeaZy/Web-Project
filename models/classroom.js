@@ -13,9 +13,14 @@ const ClassroomSchema = new mongoose.Schema({
     type: String,
   },
   admin: {
-    type:  mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
   },
-  membersList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
+  membersList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
 });
 
 const Classroom = mongoose.model("Classroom", ClassroomSchema);

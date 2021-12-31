@@ -1,10 +1,37 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light p-3">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active my-1 mx-4">
+            <a href="/users/logout">Logout</a>
+        </li>
+        <li class="nav-item my-1 mx-4">
+            <a href="/users/dashboard/createClassroom"> Create Classroom </a>
+        </li>
+        <li class="nav-item my-1 mx-4">
+            <a href="/users/dashboard/joinClassroom"> Join Classroom </a>
+        </li>
+      </ul>
+    </div>
+</nav>
+
 <h1 class="mt-4">Dashboard</h1>
 
-
 <p class="lead mb-3">Welcome, <%= user.name %> ! </p>
-<%- include ("./partials/messages") %>
-<a href="/users/logout" class="btn btn-secondary">Logout</a>
-<a href="/users/dashboard/createClassroom" class="btn btn-secondary"> Create Classroom </a>
-<a href="/users/dashboard/joinClassroom" class="btn btn-secondary"> Join Classroom </a>
 
-<p class="lead mb-3"> <%= user.classrooms.length %> classrooms joined </p>
+<% classroomsDisplay = classrooms.map(function(c) { %>
+    <div class="container p-2" >
+        <div class="w-100 card m-4" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title"> <%= c.title %></h5>
+                <h6 class="card-subtitle mt-3 text-muted"><%= c.subject %></h6>
+                <div class="mt-5">
+                <a href="/users/classrooms/<%=c.title%>" class="card-link "> Open </a>
+                </div>
+            </div>
+        </div>    
+    </div>
+<% }) %>
