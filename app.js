@@ -53,6 +53,7 @@ app.use(function (req, res, next) {
 // Routes
 app.use("/", require("./routes/index.js"));
 app.use("/users", require("./routes/users.js"));
+app.use("/users/dashboard", require("./routes/dashboard.js"));
 
 const PORT = 5000;
 

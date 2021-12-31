@@ -8,10 +8,12 @@ const EMAIL_SECRET = "asdf1093KMnzxcvnkljvasdu09123nlasdasdf";
 const { google } = require("googleapis");
 
 // Setting values for email parameter variables
-const CLIENT_ID = "437071356780-ai3jjkfgrs1auhg2u1o81pfn98s3aci4.apps.googleusercontent.com";
+const CLIENT_ID =
+  "437071356780-ai3jjkfgrs1auhg2u1o81pfn98s3aci4.apps.googleusercontent.com";
 const CLEINT_SECRET = "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";
 const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-const REFRESH_TOKEN = "1//04CwhQWJH65xMCgYIARAAGAQSNwF-L9Ir4MIFU1sI1en4ETyeTho3S6iu2AvaQ-zBl1DGagAh98P9DjWscDf0miE84_dbctvoX1Q";
+const REFRESH_TOKEN =
+  "1//04CwhQWJH65xMCgYIARAAGAQSNwF-L9Ir4MIFU1sI1en4ETyeTho3S6iu2AvaQ-zBl1DGagAh98P9DjWscDf0miE84_dbctvoX1Q";
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -112,12 +114,7 @@ router.post("/register", (req, res) => {
             newUser.password = hash;
             newUser
               .save()
-              .then((user) => {
-                req.flash(
-                  "success_msg",
-                  "You are now registered and can log in"
-                );
-              })
+              .then((user) => console.log('User created successfully'))
               .catch((err) => console.log(err));
 
             // Sending an email to the user with a confirmation link
@@ -129,6 +126,7 @@ router.post("/register", (req, res) => {
               .then(() => console.log("Email sent successfully"))
               .catch((error) => console.log(error.message));
 
+            req.flash("success_msg", "You are now registered and can log in");
             res.redirect("/users/confirmation");
           });
         });
@@ -141,16 +139,16 @@ router.post("/register", (req, res) => {
 router.get("/confirmation", (req, res) => res.render("confirmEmail"));
 
 router.get("/confirmed/:token", async (req, res) => {
-  let theMail
-  jwt.verify(req.params.token, EMAIL_SECRET, (err, email) => theMail=email);  
-  await User.updateOne({ email: theMail }, { isConfirmed: true});
+  let theMail;
+  jwt.verify(req.params.token, EMAIL_SECRET, (err, email) => (theMail = email));
+  await User.updateOne({ email: theMail }, { isConfirmed: true });
   res.render("confirmed");
 });
 
 // Login
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", {
-    successRedirect: "/dashboard",
+    successRedirect: "/users/dashboard",
     failureRedirect: "/users/login",
     failureFlash: true,
   })(req, res, next);
