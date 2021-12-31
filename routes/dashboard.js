@@ -3,17 +3,17 @@ const router = express.Router();
 const crypto = require("crypto");
 const { ensureAuthenticated } = require("../config/auth");
 
+const Classroom = require("../models/Classroom");
+const User = require("../models/User");
+
 // Dashboard
 router.get("/", ensureAuthenticated, (req, res) => {
-  var classrooms = [];
   Classroom.find({ _id: { $in: req.user.classrooms } })
     .exec()
     .then((cs) => {
-      classrooms = cs;
-      console.log(classrooms);
       res.render("dashboard", {
         user: req.user,
-        classrooms: classrooms
+        classrooms: cs
       });
     });
 });
@@ -25,8 +25,6 @@ router.get("/joinClassroom", ensureAuthenticated, (req, res) =>
   res.render("joinClassroom")
 );
 
-const Classroom = require("../models/Classroom");
-const User = require("../models/User");
 
 // Creating A Classroom
 router.post("/createClassroom", (req, res) => {
@@ -99,7 +97,6 @@ router.post("/joinClassroom", (req, res) => {
           { code: code },
           { $push: { membersList: req.user._id } }
         ).then(() => console.log("Classroom updated successfully"));
-        console.log(classroom);
         User.updateOne(
           { _id: req.user._id },
           { $push: { classrooms: classroom._id } }

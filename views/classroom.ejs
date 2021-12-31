@@ -1,4 +1,10 @@
 <h1 class="mt-4"> Hey there! </h1>
+<p class="lead mb-3">Welcome to  <%= classroom.title %> ! </p>
 
-
-<p class="lead mb-3">Welcome to  <%= title %> ! </p>
+<% if(admin){ %>
+    <h1>You are the admin</h1>
+ <% } %>
+ 
+<% if(!admin){ %>
+    <h1>You are NOT the admin</h1>
+ <% } %>

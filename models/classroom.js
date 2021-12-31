@@ -21,6 +21,18 @@ const ClassroomSchema = new mongoose.Schema({
       ref: "users",
     },
   ],
+  portalsList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "portals",
+    },
+  ],
+  announcementsList: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "announcements",
+    },
+  ],
 });
 
 const Classroom = mongoose.model("Classroom", ClassroomSchema);
