@@ -1,10 +1,71 @@
-<h1 class="mt-4"> Hey there! </h1>
-<p class="lead mb-3">Welcome to  <%= classroom.title %> ! </p>
 
-<% if(admin){ %>
-    <h1>You are the admin</h1>
- <% } %>
- 
-<% if(!admin){ %>
-    <h1>You are NOT the admin</h1>
- <% } %>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/users/classrooms/<%= classroom.title %>"><i class="fas fa-folder"></i>
+                    <%= classroom.title %>         
+                    <% if(admin){ %>                        
+                        ( <%= classroom.code %> )                    
+                        <% } %> 
+                    </a>
+                </div>
+                
+            </div>
+        </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        
+                        <% if(admin){ %>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link "  href="/users/classrooms/<%= classroom.title %>/createPortal">Create A Portal </a>              
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link "  href="/users/classrooms/<%= classroom.title %>/createAnnouncement">Make An Announcement</a>
+                            </li>
+                            
+                            <% } %> 
+                            
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/users/logout">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+    </nav>
+    
+<%- include ("./partials/messages") %>
+            
+<% portals.map(function(p) { %>
+    <div class="mt-5 container p-2" >
+        <div class="w-100 card m-4" style="width: 18rem;">
+            <h5 class="card-header"><%= p.header %></h5>    
+            <div class="card-body">
+            <h5 class="card-title ml-3 mb-3 mt-4"><%= p.description %></h5>
+
+            <% p.fileNames.map(function(file) { %> 
+
+                <a href='/<%= file %>''> Attachment </a>
+                <br>
+
+            <% }) %>
+
+            <a href="" class="mt-3 btn btn-primary">Open</a>
+            </div>
+        </div>
+    </div>
+<% }) %>
+
+
+<% announcements.map(function(a) { %>    
+    <div class="container p-2" >
+        <div class="w-100 card m-4" style="width: 18rem;">
+            <div class="card-body" >
+                <h5 class="card-title" > <%= a.header %> </h5>
+                <h6 class="card-subtitle mt-3 text-muted"><%= a.description %></h6>
+            </div>
+        </div>    
+    </div>    
+<% }) %>

@@ -2,30 +2,53 @@
     <div class="col-md-6 m-auto">
       <div class="card card-body">
         <h1 class="text-center mb-3">
-          <i class="fas fa-user-plus"></i> Create A Submission Portal
+          <i class="fab fa-usps"></i> Create A Submission Portal
         </h1>
         <%- include ("./partials/messages") %>
-        <form action="/users/dashboard/createClassroom" method="POST">
+        <form action="/users/classrooms/<%= title %>/createPortal" method="POST" enctype="multipart/form-data">
           <div class="form-group">
-            <label for="title">Title</label>
+            <label for="header"> Header </label>
             <input
               type="name"
-              id="title"
-              name="title"
+              id="header"
+              name="header"
               class="form-control"
-              placeholder="Enter Title"
-              value="<%= typeof title != 'undefined' ? title : '' %>"
+              placeholder="Enter Header"
+              value="<%= typeof header != 'undefined' ? header : '' %>"
             />  
           </div>
           <div class="form-group">
-            <label for="subject">Subject</label>
+            <label for="desc"> Description </label>
             <input
               type="name"
-              id="subject"
-              name="subject"
+              id="desc"
+              name="desc"
               class="form-control"
-              placeholder="Enter Subject"
-              value="<%= typeof subject != 'undefined' ? subject : '' %>"
+              placeholder="Enter Description"
+              value="<%= typeof desc != 'undefined' ? desc : '' %>"
+            />
+          </div>
+          <div class="form-group">
+            <label for="deadline"> Deadline </label>
+            <input
+              type="datetime-local"
+              id="deadline"
+              name="deadline"
+              class="form-control"
+              placeholder="Enter Deadline"
+              value="<%= typeof deadline != 'undefined' ? deadline : '' %>"
+            />
+          </div>
+          <div class="form-group">
+            <label for="file"> Attach A File </label>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              class="form-control"
+              placeholder="Upload a file"
+              value="<%= typeof file != 'undefined' ? file : '' %>"
+              multiple
             />
           </div>
           <button type="submit" class="btn btn-primary btn-block">

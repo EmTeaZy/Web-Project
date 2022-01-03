@@ -15,9 +15,11 @@ const PortalSchema = new mongoose.Schema({
   dueDate: {
     type: Date,
   },
-  filePath: {
-    type: String,
-  },
+  fileNames: [
+    {
+      type: String,
+    },
+  ],
 });
 
 const Portal = mongoose.model("Portal", PortalSchema);

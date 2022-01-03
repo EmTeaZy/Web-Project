@@ -12,9 +12,11 @@ const AnnouncementSchema = new mongoose.Schema({
   parentClassroom: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  filePath: {
-    type: String,
-  },
+  fileNames: [
+    {
+      type: String,
+    },
+  ],
 });
 
 const Announcement = mongoose.model("Announcement", AnnouncementSchema);
