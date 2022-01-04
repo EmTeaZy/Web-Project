@@ -6,8 +6,7 @@ const Classroom = require("../models/Classroom");
 const Portal = require("../models/Portal");
 const Announcement = require("../models/Announcement");
 const { ensureAuthenticated } = require("../config/auth");
-var path = require('path');
-
+var path = require("path");
 
 router.get("/:id/createPortal", ensureAuthenticated, (req, res) =>
   res.render("createPortal", { title: req.params.id })
@@ -15,6 +14,21 @@ router.get("/:id/createPortal", ensureAuthenticated, (req, res) =>
 router.get("/:id/createAnnouncement", ensureAuthenticated, (req, res) =>
   res.render("createAnnouncement", { title: req.params.id })
 );
+
+router.post("/:crTitle/:pHeader", ensureAuthenticated, (req, res) => {
+  req.flash("error_msg", "Functionality is yet to be added");
+  res.redirect(`/users/classrooms/${req.params.crTitle}`);
+});
+
+router.get("/:crTitle/:pHeader", ensureAuthenticated, (req, res) => {
+  Portal.findOne({ header: req.params.pHeader }).then((portal) => {
+    res.render("portal", {
+      name: req.user.name,
+      portal: portal,
+      title: req.params.crTitle,
+    });
+  });
+});
 
 router.get("/:id", ensureAuthenticated, async (req, res) => {
   let isAdmin = false;
@@ -30,6 +44,7 @@ router.get("/:id", ensureAuthenticated, async (req, res) => {
           .exec()
           .then((announcements) => {
             res.render("classroom", {
+              name: req.user.name,
               classroom: cr,
               portals: portals,
               announcements: announcements,
@@ -44,22 +59,33 @@ let filePaths = [];
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "adminUploads");
+    switch (file.fieldname) {
+      case "portalFile":
+        cb(null, "uploads/portalUploads");
+        break;
+      case "annFile":
+        cb(null, "uploads/annUploads");
+        break;
+      case "userFile":
+        cb(null, "uploads/userUploads");
+        break;
+    }
   },
   filename: (req, file, cb) => {
-
-    const ext = path.extname(file.originalname)
-    const id = uuid()
-    const filePath = `${id}${ext}`;
-    filePaths.push(filePath)
-    req.filePaths = filePaths
+    const ext = path.extname(file.originalname);
+    const id = uuid();
+    const filePath = `${id}${ext}_${file.originalname}`;
+    filePaths.push(filePath);
+    req.filePaths = filePaths;
     cb(null, filePath);
   },
 });
 
 const upload = multer({ storage });
 
-router.post("/:id/createPortal", upload.array("file"), (req, res) => {
+router.post("/:id/createPortal", upload.any(), (req, res) => {
+  console.log("posting portal");
+
   const { header, desc, deadline, file } = req.body;
 
   let errors = [];
@@ -95,7 +121,9 @@ router.post("/:id/createPortal", upload.array("file"), (req, res) => {
             Classroom.updateOne(
               { title: req.params.id },
               { $push: { portalsList: portal._id } }
-            ).then(() => console.log(console.log('Classroom updated successfully')));
+            ).then(() =>
+              console.log(console.log("Classroom updated successfully"))
+            );
           });
         });
 
@@ -105,7 +133,9 @@ router.post("/:id/createPortal", upload.array("file"), (req, res) => {
   }
 });
 
-router.post("/:id/createAnnouncement", upload.array("file"), (req, res) => {
+router.post("/:id/createAnnouncement", upload.any(), (req, res) => {
+  console.log("posting ann");
+
   const { header, desc } = req.body;
 
   let errors = [];
@@ -139,7 +169,7 @@ router.post("/:id/createAnnouncement", upload.array("file"), (req, res) => {
             Classroom.updateOne(
               { title: req.params.id },
               { $push: { announcementsList: announcement._id } }
-            ).then((cr) => console.log(cr));
+            ).then(() => console.log("Classroom updated successfully"));
           });
         });
 

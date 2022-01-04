@@ -1,0 +1,57 @@
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/users/classrooms/<%= title %>/<%= portal.header %>"><i class="fas fa-folder"></i>
+                    <%= portal.header %>
+                    </a>
+                </div>
+                
+            </div>
+        </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">                            
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/users/logout">Logout from <%= name %></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+    </nav>
+    
+<%- include ("./partials/messages") %>
+            
+    <div class="mt-5 container p-2" >
+        <div class="w-100 card m-4" style="width: 18rem;">
+            <h3 class="card-header"><%= portal.header %></h3>    
+            <div class="card-body">
+            <h5 class="card-title ml-3 mb-3 mt-4"><%= portal.description %></h5>
+
+            <% portal.fileNames.map(function(file) { %>     
+
+                <a href='/portalUploads/<%= file %>'> <%= file.substring(file.indexOf('_') + 1) %> </a>
+                <br>
+
+            <% }) %>
+            </div>
+
+            <form href="/users/classrooms/<%= title %>/<%= portal.header %>" method="POST">
+                <div class="form-group">
+                  <label for="userFile"> Attach A File </label>
+                  <input
+                    type="file"
+                    id="userFile"
+                    name="userFile"
+                    class="form-control"
+                    placeholder="Upload a file"
+                    multiple
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  Submit
+                </button>
+              </form>
+        </div>
+    </div>
