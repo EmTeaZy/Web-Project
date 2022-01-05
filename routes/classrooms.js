@@ -15,11 +15,6 @@ router.get("/:id/createAnnouncement", ensureAuthenticated, (req, res) =>
   res.render("createAnnouncement", { title: req.params.id })
 );
 
-router.post("/:crTitle/:pHeader", ensureAuthenticated, (req, res) => {
-  req.flash("error_msg", "Functionality is yet to be added");
-  res.redirect(`/users/classrooms/${req.params.crTitle}`);
-});
-
 router.get("/:crTitle/:pHeader", ensureAuthenticated, (req, res) => {
   Portal.findOne({ header: req.params.pHeader }).then((portal) => {
     res.render("portal", {
@@ -122,7 +117,7 @@ router.post("/:id/createPortal", upload.any(), (req, res) => {
               { title: req.params.id },
               { $push: { portalsList: portal._id } }
             ).then(() =>
-              console.log(console.log("Classroom updated successfully"))
+              console.log("Classroom updated successfully")
             );
           });
         });
@@ -178,5 +173,12 @@ router.post("/:id/createAnnouncement", upload.any(), (req, res) => {
       });
   }
 });
+
+
+router.post("/:crTitle/:pHeader", ensureAuthenticated, (req, res) => {
+  req.flash("error_msg", "Functionality is yet to be added");
+  res.redirect(`/users/classrooms/${req.params.crTitle}`);
+});
+
 
 module.exports = router;
